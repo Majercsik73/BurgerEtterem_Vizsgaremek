@@ -26,40 +26,29 @@
                 $hashpw = md5($pw1);
 
                 $f = new FelhasznEll();
+                $f->Azon = 0;
                 $f->Nev = $nev;
+                $f->Lak = $lak;
+                $f->Tel = $tel;
                 $f->Email = $email;
-                
+                $f->Jog = 0;
+                $f->Pw = $hashpw;
+            
                 $jsonfelh = json_encode($f);
-                $result = CallAPI("POST", "https://localhost:5001/Felhasznalok/Web", $jsonfelh);
+                $result = CallAPI("PUT", "https://localhost:5001/Felhasznalok/", $jsonfelh);
                 $felh = json_decode($result[1]);
-
-                if ($_SESSION['Felhasznalonev'] == $felh->{"Nev"}){
-                    echo "<script>alert('A felhasználónév már létezik, adj meg egy másikat!')</script>";
-                }
-                elseif ($_SESSION['Email'] == $felh->{"Email"}){
-                    echo "<script>alert('Ezzel az email címmel már regisztráltak, adj meg egy másikat!')</script>";;
-                }
-                else{
-                    $fe = new FelhasznReg();
-                    $fe->Azon = 0;
-                    $fe->Nev = $nev;
-                    $fe->Lak = $lak;
-                    $fe->Tel = $tel;
-                    $fe->Email = $email;
-                    $fe->Jog = 0;
-                    $fe->Pw = $hashpw;
-
-                    $jsonfelhReg = json_encode($fe);
-                    $result2 = CallAPI("PUT", "https://localhost:5001/Felhasznalok", $jsonfelhReg);
                 
-                    $felh2 = json_decode($result2[1]);
-                    if ($felh2 == NULL){
-                        session_unset();
-                        echo "<script>alert('Köszönjük a regisztrációt!')</script>";
+                if($result[1] == "")
+                {
+                    session_unset();
+                    echo "<script>alert('Köszönjük a regisztrációt!')</script>";
 
-                        header("Refresh:0");    // Ne ragadjonak be az adatok!!!!
-                        echo "<script>location.href='belepes.php'</script>";
-                    }
+                    header("Refresh:0");    // Ne ragadjonak be az adatok!!!!
+                    echo "<script>location.href='belepes.php'</script>";
+                }
+                else
+                {
+                    echo "<script>alert('Ezzel az email címmel már regisztráltak, adj meg egy másikat!')</script>";
                 }
             }
     }
